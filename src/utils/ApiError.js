@@ -1,14 +1,14 @@
 class ApiError extends Error {
-    // khởi tạo class
-    constructor(statusCode, message) {
-        super(message)
+  // khởi tạo class
+  constructor(statusCode, message) {
+    super(message);
 
-        this.name = 'ApiError'
+    this.name = "ApiError";
 
-        this.statusCode = statusCode
+    this.statusCode = statusCode;
 
-        Error.captureStackTrace(this, this.contructor)
-    }
+    Error.captureStackTrace(this, this.contructor);
+  }
 }
 
-export default ApiError
+export default ApiError;
