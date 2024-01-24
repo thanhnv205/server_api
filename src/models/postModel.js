@@ -46,9 +46,6 @@ const getBySlug = async (slug) => {
 const createUser = async (data) => {
   try {
     const valiData = await validateBeforeCreate(data)
-
-    console.log('valiData', valiData)
-
     return await getDB().collection(POST_COLLECTION_NAME).insertOne(valiData)
   } catch (error) {
     throw new Error(error)

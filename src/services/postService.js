@@ -7,7 +7,7 @@ const getAllPosts = async () => {
   try {
     return await postModel.getAllPosts()
   } catch (error) {
-    throw error
+    return error
   }
 }
 

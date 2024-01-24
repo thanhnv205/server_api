@@ -9,6 +9,7 @@ import { env } from '~/config/environment'
 
 import authRoutes from '~/routes/v1/authRoute'
 import { APIs_V1 } from '~/routes/v1'
+
 import { errorHandlingMiddleware } from '~/middlewares/errorHandlingMiddleware'
 
 const startServer = () => {

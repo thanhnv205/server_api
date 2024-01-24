@@ -2,6 +2,7 @@ import express from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { postRoute } from './postRoute'
 import { categoryPostRoute } from './categoryPostRouter'
+import { menuTypeRoute } from './menuTypeRoute'
 
 const Router = express.Router()
 
@@ -10,6 +11,9 @@ Router.get('/status', (req, res) => {
 })
 
 // apis post
+Router.use('/menu-type', menuTypeRoute)
+
 Router.use('/posts', postRoute)
 Router.use('/category-posts', categoryPostRoute)
+
 export const APIs_V1 = Router

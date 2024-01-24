@@ -15,12 +15,50 @@ const MENU_TYPE_COLLECTION_SCHEMA = Joi.object({
 
 const getAllItems = async () => {
   try {
-    return await getDB().collection(MENU_TYPE_COLLECTION_NAME).find()
+    return await getDB().collection(MENU_TYPE_COLLECTION_NAME).find().toArray()
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const getByName = async (name) => {
+  try {
+    return await getDB().collection(MENU_TYPE_COLLECTION_NAME).findOne({
+      type_name: name
+    })
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const validateBeforeCreate = async (data) => {
+  return await MENU_TYPE_COLLECTION_SCHEMA.validateAsync(data, {
+    abortEarly: false
+  })
+}
+
+const createNew = async (data) => {
+  try {
+    const valiData = await validateBeforeCreate(data)
+    return await getDB().collection(MENU_TYPE_COLLECTION_NAME).insertOne(valiData)
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const findOneById = async (id) => {
+  try {
+    return await getDB().collection(MENU_TYPE_COLLECTION_NAME).findOne({
+      _id: new ObjectId(id)
+    })
   } catch (error) {
     throw new Error(error)
   }
 }
 
 export const menuTypeModel = {
-  getAllItems
+  getAllItems,
+  createNew,
+  getByName,
+  findOneById
 }
