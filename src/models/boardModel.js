@@ -18,6 +18,8 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
     _destroy: Joi.boolean().default(false)
 })
 
+const INVALID_UPDATE_FIELDS = ['_id', 'createdAt']
+
 const validateBeforeCreate = async (data) => {
     return await BOARD_COLLECTION_SCHEMA.validateAsync(data, { abortEarly: false })
 }
@@ -53,10 +55,31 @@ const getDetails = async (id) => {
     }
 }
 
+const update = async (id, data) => {
+    try {
+        Object.keys(data).forEach(item => {
+            if (INVALID_UPDATE_FIELDS.includes(item)) {
+                delete data[item]
+            }
+        })
+
+        const result = await getDB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
+            { _id: new ObjectId(id) },
+            { $set: data },
+            { returnDocument: 'after' }
+        )
+
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
 export const boardModel = {
     BOARD_COLLECTION_NAME,
     BOARD_COLLECTION_SCHEMA,
     createNew,
     findOneById,
-    getDetails
+    getDetails,
+    update
 }
