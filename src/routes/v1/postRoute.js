@@ -11,5 +11,6 @@ Router.route('/')
 Router.route('/:id')
   .get(postController.getDetails)
   .put(postValidation.update, postController.update)
+  .delete(postValidation.deleteItem, postController.deleteItem)
 
 export const postRoute = Router

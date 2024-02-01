@@ -59,10 +59,19 @@ const update = async (id, body) => {
   } catch (error) { return error }
 }
 
+const deleteItem = async (id) => {
+  try {
+    // xóa item
+    await postModel.deleteOneById(id)
+    return { deleteMessage: 'Delete posts successfully!' }
+  } catch (error) { return error }
+}
+
 export const postService = {
   getAllPosts,
   getBySlug,
   createNew,
   getDetails,
-  update
+  update,
+  deleteItem
 }

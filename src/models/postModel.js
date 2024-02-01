@@ -100,6 +100,18 @@ const update = async (id, data) => {
   }
 }
 
+const deleteOneById = async (id) => {
+  try {
+    return await getDB()
+      .collection(POST_COLLECTION_NAME)
+      .deleteOne({
+        _id: new ObjectId(id)
+      })
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 export const postModel = {
   POST_COLLECTION_NAME,
   POST_COLLECTION_SCHEMA,
@@ -108,5 +120,6 @@ export const postModel = {
   createNew,
   findOneById,
   getDetails,
-  update
+  update,
+  deleteOneById
 }

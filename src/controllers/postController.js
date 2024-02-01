@@ -52,9 +52,20 @@ const update = async (req, res, next) => {
 }
 
 
+const deleteItem = async (req, res, next) => {
+  try {
+    const postId = req.params.id
+    const result = await postService.deleteItem(postId)
+
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) { next(error) }
+}
+
+
 export const postController = {
   getAllPosts,
   createNew,
   getDetails,
-  update
+  update,
+  deleteItem
 }
