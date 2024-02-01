@@ -49,9 +49,20 @@ const getDetails = async (data) => {
   }
 }
 
+const update = async (id, body) => {
+  try {
+    const updateData = {
+      ...body,
+      updatedAt: Date.now()
+    }
+    return await postModel.update(id, updateData)
+  } catch (error) { return error }
+}
+
 export const postService = {
   getAllPosts,
   getBySlug,
   createNew,
-  getDetails
+  getDetails,
+  update
 }

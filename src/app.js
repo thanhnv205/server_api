@@ -28,7 +28,7 @@ const startServer = () => {
     console.log(`Server running at http://${env.APP_HOST}:${env.PORT}`)
   })
 
-  // cleanup trước khi dừng server
+  //  cleanup trước khi dừng server
   exitHook(() => {
     closeDB()
     console.log('exiting')
@@ -38,8 +38,8 @@ const startServer = () => {
 (async () => {
   try {
     await connectDB()
-    console.log('Connected to MongoDB Cloud Atlas!')
     startServer()
+    console.log('Connected to MongoDB Cloud Atlas!')
   } catch (error) {
     process.exit(0)
   }

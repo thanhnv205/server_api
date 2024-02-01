@@ -8,6 +8,8 @@ Router.route('/')
   .get(postController.getAllPosts)
   .post(postValidation.createNew, postController.createNew)
 
-Router.route('/:id').get(postController.getDetails).put()
+Router.route('/:id')
+  .get(postController.getDetails)
+  .put(postValidation.update, postController.update)
 
 export const postRoute = Router
