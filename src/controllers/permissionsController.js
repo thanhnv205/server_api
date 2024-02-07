@@ -1,9 +1,9 @@
 import { StatusCodes } from 'http-status-codes'
-import { postService } from '~/services/postService'
+import { permissionsService } from '~/services/permissionsService'
 
-const getAllPosts = async (req, res, next) => {
+const getAllItems = async (req, res, next) => {
   try {
-    const posts = await postService.getAllPosts()
+    const posts = await permissionsService.getAllItems()
 
     res.status(StatusCodes.OK).json(posts)
   } catch (error) {
@@ -13,21 +13,20 @@ const getAllPosts = async (req, res, next) => {
 
 const createNew = async (req, res, next) => {
   try {
-    const { slug } = req.body
-    // Kiểm tra xem slug đã tồn tại hay không
-    const existingSlug = await postService.getBySlug(slug)
+    const { permission_name } = req.body
 
-    if (existingSlug) {
-      // Nếu slug đã tồn tại, trả về lỗi cho client
+    const existingName = await permissionsService.getByName(permission_name)
+
+    if (existingName) {
+      // Nếu name đã tồn tại, trả về lỗi cho client
       return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ message: 'Slug đã tồn tại' })
+        .json({ message: 'Tên phân quyền đã tồn tại đã tồn tại' })
     }
 
-    // Nếu slug không tồn tại, tiếp tục tạo mới post
-    const createdPost = await postService.createNew(req.body)
+    const createdPermission = await permissionsService.createNew(req.body)
 
-    res.status(StatusCodes.CREATED).json(createdPost)
+    res.status(StatusCodes.CREATED).json(createdPermission)
   } catch (error) {
     next(error)
   }
@@ -35,7 +34,7 @@ const createNew = async (req, res, next) => {
 
 const getDetails = async (req, res, next) => {
   try {
-    const post = await postService.getDetails(req.params.id)
+    const post = await permissionsService.getDetails(req.params.id)
     res.status(StatusCodes.OK).json(post)
   } catch (error) {
     next(error)
@@ -45,7 +44,7 @@ const getDetails = async (req, res, next) => {
 const update = async (req, res, next) => {
   try {
     const postId = req.params.id
-    const updatedPost = await postService.active(postId, req.body)
+    const updatedPost = await permissionsService.active(postId, req.body)
 
     res.status(StatusCodes.OK).json(updatedPost)
   } catch (error) { next(error) }
@@ -55,7 +54,7 @@ const active = async (req, res, next) => {
   try {
     const postId = req.body.listId
 
-    const updatedPost = await postService.active(postId, req.body)
+    const updatedPost = await permissionsService.active(postId, req.body)
 
     res.status(StatusCodes.OK).json(updatedPost)
   } catch (error) { next(error) }
@@ -64,15 +63,15 @@ const active = async (req, res, next) => {
 const deleteItem = async (req, res, next) => {
   try {
     const postId = req.params.id
-    const result = await postService.deleteItem(postId)
+    const result = await permissionsService.deleteItem(postId)
 
     res.status(StatusCodes.OK).json(result)
   } catch (error) { next(error) }
 }
 
 
-export const postController = {
-  getAllPosts,
+export const permissionsController = {
+  getAllItems,
   createNew,
   getDetails,
   update,

@@ -8,6 +8,9 @@ Router.route('/')
   .get(postController.getAllPosts)
   .post(postValidation.createNew, postController.createNew)
 
+Router.route('/active')
+  .post(postValidation.active, postController.active)
+
 Router.route('/:id')
   .get(postController.getDetails)
   .put(postValidation.update, postController.update)

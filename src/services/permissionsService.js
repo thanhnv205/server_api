@@ -1,19 +1,19 @@
 import { slugify } from '~/utils/formatters'
-import { postModel } from '~/models/postModel'
+import { permissionsModel } from '~/models/permissionsModel'
 import ApiError from '~/utils/ApiError'
 import { StatusCodes } from 'http-status-codes'
 
-const getAllPosts = async () => {
+const getAllItems = async () => {
   try {
-    return await postModel.getAllPosts()
+    return await permissionsModel.getAllItems().toArray()
   } catch (error) {
     return error
   }
 }
 
-const getBySlug = async (slug) => {
+const getByName = async (name) => {
   try {
-    return await postModel.getBySlug(slug)
+    return await permissionsModel.getByName(name)
   } catch (error) {
     return error
   }
@@ -21,16 +21,11 @@ const getBySlug = async (slug) => {
 
 const createNew = async (data) => {
   try {
-    const newpost = {
-      ...data,
-      slug: slugify(data.title)
-    }
-
-    // gọi tới tầng model => lưu newpost vào Database
-    const createdpost = await postModel.createNew(newpost)
+    // gọi tới tầng model => lưu newPermission vào Database
+    const created = await permissionsModel.createNew(data)
 
     // lấy bản ghi post khi được tạo
-    return await postModel.findOneById(createdpost.insertedId)
+    return await permissionsModel.findOneById(created.insertedId)
   } catch (error) {
     return error
   }
@@ -38,7 +33,7 @@ const createNew = async (data) => {
 
 const getDetails = async (data) => {
   try {
-    const post = await postModel.getDetails(data)
+    const post = await permissionsModel.getDetails(data)
     if (!post) {
       throw new ApiError(StatusCodes.NOT_FOUND, 'post not found!')
     }
@@ -55,7 +50,7 @@ const update = async (id, body) => {
       ...body,
       updatedAt: Date.now()
     }
-    return await postModel.update(id, updateData)
+    return await permissionsModel.update(id, updateData)
   } catch (error) { return error }
 }
 
@@ -66,21 +61,21 @@ const active = async (listId, body) => {
       updatedAt: Date.now()
     }
 
-    return await postModel.active(listId, updateData)
+    return await permissionsModel.active(listId, updateData)
   } catch (error) { return error }
 }
 
 const deleteItem = async (id) => {
   try {
     // xóa item
-    await postModel.deleteOneById(id)
+    await permissionsModel.deleteOneById(id)
     return { deleteMessage: 'Delete posts successfully!' }
   } catch (error) { return error }
 }
 
-export const postService = {
-  getAllPosts,
-  getBySlug,
+export const permissionsService = {
+  getAllItems,
+  getByName,
   createNew,
   getDetails,
   update,
