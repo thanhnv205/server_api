@@ -1,12 +1,24 @@
 import Joi from 'joi'
 import { ObjectId } from 'mongodb'
+import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/validators'
 import { getDB } from '~/config/mongodb'
 
-const USER_COLLECTION_NAME = 'users'
-const USER_COLLECTION_SCHEMA = Joi.object({
-  username: Joi.string().required().min(3).max(50).trim().strict(),
-  email: Joi.string().required().email().trim().strict(),
-  password: Joi.string().required().min(6).trim().strict(),
+const MENU_SYSTEM_COLLECTION_NAME = 'menu-system'
+const MENU_SYSTEM_COLLECTION_SCHEMA = Joi.object({
+  active: Joi.boolean().default(true),
+  id_parent: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE).default('0'),
+  id_type: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
+  menu_name: Joi.string().required().min(3).max(50).trim().strict(),
+  description: Joi.string().trim().strict().default(null),
+  target: Joi.string().trim().strict().default(null),
+  url: Joi.string().trim().strict().default(null),
+  icon: Joi.string().trim().strict().default(null),
+  slug: Joi.string().required().min(3).trim().strict(),
+  image: Joi.string().uri().trim().strict().default(null),
+  order_by: Joi.number().integer().min(1),
+  permissions: Joi.array()
+    .items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE))
+    .default([]),
 
   createdAt: Joi.date().timestamp('javascript').default(Date.now),
   updatedAt: Joi.date().timestamp('javascript').default(null),
@@ -16,30 +28,14 @@ const USER_COLLECTION_SCHEMA = Joi.object({
 const INVALID_UPDATE_FIELDS = ['_id', 'createdAt']
 
 const validateBeforeCreate = async (data) => {
-  return await USER_COLLECTION_SCHEMA.validateAsync(data, {
+  return await MENU_SYSTEM_COLLECTION_SCHEMA.validateAsync(data, {
     abortEarly: false
   })
 }
 
-const getAllUsers = async () => {
+const getAllItems = async () => {
   try {
-    return await getDB().collection(USER_COLLECTION_NAME).find().toArray()
-  } catch (error) {
-    throw new Error(error)
-  }
-}
-
-const getByName = async (user_name) => {
-  try {
-    return await getDB().collection(USER_COLLECTION_NAME).findOne({ user_name })
-  } catch (error) {
-    throw new Error(error)
-  }
-}
-
-const getByEmail = async (email) => {
-  try {
-    return await getDB().collection(USER_COLLECTION_NAME).findOne({ email })
+    return await getDB().collection(MENU_SYSTEM_COLLECTION_NAME).find().toArray()
   } catch (error) {
     throw new Error(error)
   }
@@ -48,7 +44,24 @@ const getByEmail = async (email) => {
 const createNew = async (data) => {
   try {
     const valiData = await validateBeforeCreate(data)
-    return await getDB().collection(USER_COLLECTION_NAME).insertOne(valiData)
+
+    return await getDB().collection(MENU_SYSTEM_COLLECTION_NAME).insertOne(valiData)
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const getByName = async (menu_name) => {
+  try {
+    return await getDB().collection(MENU_SYSTEM_COLLECTION_NAME).findOne({ menu_name })
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const getBySlug = async (slug) => {
+  try {
+    return await getDB().collection(MENU_SYSTEM_COLLECTION_NAME).findOne({ slug })
   } catch (error) {
     throw new Error(error)
   }
@@ -57,7 +70,7 @@ const createNew = async (data) => {
 const findOneById = async (id) => {
   try {
     return await getDB()
-      .collection(USER_COLLECTION_NAME)
+      .collection(MENU_SYSTEM_COLLECTION_NAME)
       .findOne({
         _id: new ObjectId(id)
       })
@@ -70,10 +83,11 @@ const findOneById = async (id) => {
 const getDetails = async (id) => {
   try {
     return await getDB()
-      .collection(USER_COLLECTION_NAME)
+      .collection(MENU_SYSTEM_COLLECTION_NAME)
       .findOne({
         _id: new ObjectId(id)
       })
+
   } catch (error) {
     throw new Error(error)
   }
@@ -88,7 +102,7 @@ const update = async (id, data) => {
       }
     })
 
-    const result = await getDB().collection(USER_COLLECTION_NAME).findOneAndUpdate(
+    const result = await getDB().collection(MENU_SYSTEM_COLLECTION_NAME).findOneAndUpdate(
       { _id: new ObjectId(id) },
       { $set: data },
       { returnDocument: 'after' }
@@ -110,7 +124,7 @@ const active = async (listId, data) => {
 
     const newIds = listId.map(id => new ObjectId(id))
 
-    const result = await getDB().collection(USER_COLLECTION_NAME).updateMany(
+    const result = await getDB().collection(MENU_SYSTEM_COLLECTION_NAME).updateMany(
       { _id: { $in: newIds } },
       { $set: data },
       { returnDocument: 'after' }
@@ -125,7 +139,7 @@ const active = async (listId, data) => {
 const deleteOneById = async (id) => {
   try {
     return await getDB()
-      .collection(USER_COLLECTION_NAME)
+      .collection(MENU_SYSTEM_COLLECTION_NAME)
       .deleteOne({
         _id: new ObjectId(id)
       })
@@ -134,13 +148,13 @@ const deleteOneById = async (id) => {
   }
 }
 
-export const userModel = {
-  USER_COLLECTION_NAME,
-  USER_COLLECTION_SCHEMA,
-  getAllUsers,
-  getByName,
-  getByEmail,
+export const menuSystemModel = {
+  MENU_SYSTEM_COLLECTION_NAME,
+  MENU_SYSTEM_COLLECTION_SCHEMA,
+  getAllItems,
   createNew,
+  getByName,
+  getBySlug,
   findOneById,
   getDetails,
   update,

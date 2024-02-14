@@ -22,7 +22,7 @@ const createNew = async (req, res, next) => {
     }
 
     const createdMenuType = await menuTypeService.createNew(req.body)
-    console.log('createdMenuType', createdMenuType)
+
     res.status(StatusCodes.CREATED).json(createdMenuType)
   } catch (error) {
     next(error)

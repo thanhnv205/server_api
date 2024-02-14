@@ -7,10 +7,11 @@ import exitHook from 'async-exit-hook'
 import { connectDB, closeDB } from '~/config/mongodb'
 import { env } from '~/config/environment'
 
-import { APIs_Auth } from './routes/auth'
+import { APIs_auth } from './routes/auth'
 import { APIs_V1 } from '~/routes/v1'
 
 import { errorHandlingMiddleware } from '~/middlewares/errorHandlingMiddleware'
+import { APIs_system } from './routes/system'
 
 const startServer = () => {
   const app = express()
@@ -18,7 +19,8 @@ const startServer = () => {
 
   app.use(express.json())
 
-  app.use('/auth', APIs_Auth)
+  app.use('/auth', APIs_auth)
+  app.use('/system', APIs_system)
   app.use('/v1', APIs_V1)
 
   // middleware handler erorr

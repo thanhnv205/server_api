@@ -1,29 +1,32 @@
 import Joi from 'joi'
 import { ObjectId } from 'mongodb'
+import bcrypt from 'bcrypt'
+
 import { getDB } from '~/config/mongodb'
 
-const USER_COLLECTION_NAME = 'users'
-const USER_COLLECTION_SCHEMA = Joi.object({
-  username: Joi.string().required().min(3).max(50).trim().strict(),
+const INFO_COLLECTION_NAME = 'info'
+const INFO_COLLECTION_SCHEMA = Joi.object({
+  code_id: Joi.string().trim().strict(),
+  user_name: Joi.string().required().min(3).max(50).trim().strict(),
   email: Joi.string().required().email().trim().strict(),
   password: Joi.string().required().min(6).trim().strict(),
-
   createdAt: Joi.date().timestamp('javascript').default(Date.now),
   updatedAt: Joi.date().timestamp('javascript').default(null),
   _destroy: Joi.boolean().default(false)
 })
 
+const SALT_ROUNDS = 10
 const INVALID_UPDATE_FIELDS = ['_id', 'createdAt']
 
 const validateBeforeCreate = async (data) => {
-  return await USER_COLLECTION_SCHEMA.validateAsync(data, {
+  return await INFO_COLLECTION_SCHEMA.validateAsync(data, {
     abortEarly: false
   })
 }
 
-const getAllUsers = async () => {
+const getInfo = async () => {
   try {
-    return await getDB().collection(USER_COLLECTION_NAME).find().toArray()
+    return await getDB().collection(INFO_COLLECTION_NAME).find().toArray()
   } catch (error) {
     throw new Error(error)
   }
@@ -31,7 +34,7 @@ const getAllUsers = async () => {
 
 const getByName = async (user_name) => {
   try {
-    return await getDB().collection(USER_COLLECTION_NAME).findOne({ user_name })
+    return await getDB().collection(INFO_COLLECTION_NAME).findOne({ user_name })
   } catch (error) {
     throw new Error(error)
   }
@@ -39,16 +42,26 @@ const getByName = async (user_name) => {
 
 const getByEmail = async (email) => {
   try {
-    return await getDB().collection(USER_COLLECTION_NAME).findOne({ email })
+    return await getDB().collection(INFO_COLLECTION_NAME).findOne({ email })
   } catch (error) {
     throw new Error(error)
   }
 }
 
-const createNew = async (data) => {
+const hashPassword = async (password) => {
+  const salt = await bcrypt.genSalt(SALT_ROUNDS)
+  return await bcrypt.hash(password, salt)
+}
+
+
+const createInfo = async (data) => {
+  const validatedData = await validateBeforeCreate(data)
   try {
-    const valiData = await validateBeforeCreate(data)
-    return await getDB().collection(USER_COLLECTION_NAME).insertOne(valiData)
+    validatedData.password = await hashPassword(validatedData.password)
+
+    return await getDB()
+      .collection(INFO_COLLECTION_NAME)
+      .insertOne(validatedData)
   } catch (error) {
     throw new Error(error)
   }
@@ -57,7 +70,7 @@ const createNew = async (data) => {
 const findOneById = async (id) => {
   try {
     return await getDB()
-      .collection(USER_COLLECTION_NAME)
+      .collection(INFO_COLLECTION_NAME)
       .findOne({
         _id: new ObjectId(id)
       })
@@ -70,7 +83,7 @@ const findOneById = async (id) => {
 const getDetails = async (id) => {
   try {
     return await getDB()
-      .collection(USER_COLLECTION_NAME)
+      .collection(INFO_COLLECTION_NAME)
       .findOne({
         _id: new ObjectId(id)
       })
@@ -88,7 +101,7 @@ const update = async (id, data) => {
       }
     })
 
-    const result = await getDB().collection(USER_COLLECTION_NAME).findOneAndUpdate(
+    const result = await getDB().collection(INFO_COLLECTION_NAME).findOneAndUpdate(
       { _id: new ObjectId(id) },
       { $set: data },
       { returnDocument: 'after' }
@@ -110,7 +123,7 @@ const active = async (listId, data) => {
 
     const newIds = listId.map(id => new ObjectId(id))
 
-    const result = await getDB().collection(USER_COLLECTION_NAME).updateMany(
+    const result = await getDB().collection(INFO_COLLECTION_NAME).updateMany(
       { _id: { $in: newIds } },
       { $set: data },
       { returnDocument: 'after' }
@@ -125,7 +138,7 @@ const active = async (listId, data) => {
 const deleteOneById = async (id) => {
   try {
     return await getDB()
-      .collection(USER_COLLECTION_NAME)
+      .collection(INFO_COLLECTION_NAME)
       .deleteOne({
         _id: new ObjectId(id)
       })
@@ -134,13 +147,13 @@ const deleteOneById = async (id) => {
   }
 }
 
-export const userModel = {
-  USER_COLLECTION_NAME,
-  USER_COLLECTION_SCHEMA,
-  getAllUsers,
+export const infoModel = {
+  INFO_COLLECTION_NAME,
+  INFO_COLLECTION_SCHEMA,
+  getInfo,
   getByName,
   getByEmail,
-  createNew,
+  createInfo,
   findOneById,
   getDetails,
   update,

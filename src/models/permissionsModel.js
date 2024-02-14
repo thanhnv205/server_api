@@ -27,7 +27,7 @@ const validateBeforeCreate = async (data) => {
 
 const getAllItems = async () => {
   try {
-    return await getDB().collection(PERMISSIONS_COLLECTION_NAME).find()
+    return await getDB().collection(PERMISSIONS_COLLECTION_NAME).find().toArray()
   } catch (error) {
     throw new Error(error)
   }
@@ -71,6 +71,7 @@ const getDetails = async (id) => {
       .findOne({
         _id: new ObjectId(id)
       })
+
   } catch (error) {
     throw new Error(error)
   }

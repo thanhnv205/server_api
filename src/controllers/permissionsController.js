@@ -3,9 +3,8 @@ import { permissionsService } from '~/services/permissionsService'
 
 const getAllItems = async (req, res, next) => {
   try {
-    const posts = await permissionsService.getAllItems()
-
-    res.status(StatusCodes.OK).json(posts)
+    const permissions = await permissionsService.getAllItems()
+    res.status(StatusCodes.OK).json(permissions)
   } catch (error) {
     next(error)
   }
@@ -34,8 +33,8 @@ const createNew = async (req, res, next) => {
 
 const getDetails = async (req, res, next) => {
   try {
-    const post = await permissionsService.getDetails(req.params.id)
-    res.status(StatusCodes.OK).json(post)
+    const permissions = await permissionsService.getDetails(req.params.id)
+    res.status(StatusCodes.OK).json(permissions)
   } catch (error) {
     next(error)
   }
@@ -43,8 +42,9 @@ const getDetails = async (req, res, next) => {
 
 const update = async (req, res, next) => {
   try {
-    const postId = req.params.id
-    const updatedPost = await permissionsService.active(postId, req.body)
+    const permissionId = req.params.id
+
+    const updatedPost = await permissionsService.update(permissionId, req.body)
 
     res.status(StatusCodes.OK).json(updatedPost)
   } catch (error) { next(error) }

@@ -9,4 +9,10 @@ Router.route('/')
   .get(permissionsController.getAllItems)
   .post(permissionsValidation.createNew, permissionsController.createNew)
 
+
+Router.route('/:id')
+  .get(permissionsController.getDetails)
+  .put(permissionsValidation.update, permissionsController.update)
+  .delete(permissionsValidation.deleteItem, permissionsController.deleteItem)
+
 export const permissionsRouter = Router

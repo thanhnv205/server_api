@@ -5,6 +5,7 @@ import ApiError from '~/utils/ApiError'
 const loginUser = async (req, res, next) => {
   const correctCondition = Joi.object({
     email: Joi.string().required().email().trim().strict(),
+    code_id: Joi.string().required().trim().strict(),
     password: Joi.string().required().min(6).trim().strict()
   })
 
@@ -18,7 +19,7 @@ const loginUser = async (req, res, next) => {
   }
 }
 
-const createUser = async (req, res, next) => {
+const createInfo = async (req, res, next) => {
   const correctCondition = Joi.object({
     user_name: Joi.string().required().min(3).max(50).trim().strict(),
     email: Joi.string().required().email().trim().strict(),
@@ -29,11 +30,11 @@ const createUser = async (req, res, next) => {
     await correctCondition.validateAsync(req.body, { abortEarly: false })
     next()
   } catch (error) {
-    new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error).message)
+    throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error).message)
   }
 }
 
-export const userValidation = {
+export const infoValidation = {
   loginUser,
-  createUser
+  createInfo
 }

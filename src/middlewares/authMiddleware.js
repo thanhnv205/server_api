@@ -4,7 +4,6 @@ import { StatusCodes } from 'http-status-codes'
 
 export const authMiddleware = (req, res, next) => {
   const token = req.header('token')
-
   if (!token) {
     return res
       .status(StatusCodes.UNAUTHORIZED)

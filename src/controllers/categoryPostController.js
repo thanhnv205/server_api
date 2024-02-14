@@ -16,7 +16,7 @@ const createNew = async (req, res, next) => {
     const { slug } = req.body
     // Kiểm tra xem slug có tồn tại hay không
     const existingSlug = await categoryPostService.getBySlug(slug)
-    console.log('slug =>>', existingSlug)
+
     if (existingSlug) {
       // Nếu slug đã tồn tại, trả về lỗi cho client
       return res
@@ -42,7 +42,7 @@ const getDetails = async (req, res, next) => {
   }
 }
 
-const destroyPost = async (req, res, next) => {}
+const destroyPost = async (req, res, next) => { }
 
 export const categoryPostController = {
   getAllItem,

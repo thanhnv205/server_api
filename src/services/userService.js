@@ -1,7 +1,7 @@
 import { userModel } from '~/models/userModel'
 
 
-const getAllUsers = async () => {
+const getUser = async () => {
   try {
     return await userModel.getAllUsers()
   } catch (error) {
@@ -9,6 +9,24 @@ const getAllUsers = async () => {
   }
 }
 
+const getByName = async (name) => {
+  try {
+    return await userModel.getByName(name)
+  } catch (error) {
+    return error
+  }
+}
+
+const getByEmail = async (email) => {
+  try {
+    return await userModel.getByEmail(email)
+  } catch (error) {
+    return error
+  }
+}
+
 export const userService = {
-  getAllUsers
+  getUser,
+  getByName,
+  getByEmail
 }

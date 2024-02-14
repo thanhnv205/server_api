@@ -45,7 +45,7 @@ const getDetails = async (data) => {
 
     return post
   } catch (error) {
-    return error
+    throw new Error(error)
   }
 }
 
