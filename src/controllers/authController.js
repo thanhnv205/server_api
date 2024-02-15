@@ -30,7 +30,7 @@ const loginUser = async (req, res) => {
       expiresIn: '1h'
     })
 
-    res.status(StatusCodes.OK).json({ token })
+    res.status(StatusCodes.OK).json({ user, token })
   } catch (error) {
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
