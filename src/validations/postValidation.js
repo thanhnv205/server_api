@@ -41,33 +41,12 @@ const update = async (req, res, next) => {
   }
 }
 
-
-const active = async (req, res, next) => {
-  const correctCondition = Joi.object({
-    ids: Joi.array()
-      .items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE))
-      .required(),
-    active: Joi.boolean().required()
-  })
-
-  try {
-    await correctCondition.validateAsync(req.body, {
-      abortEarly: false,
-      allowUnknown: true
-    })
-    // validate hợp lệ => qua tầng contrller
-    next()
-  } catch (error) {
-    next(
-      new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error).message)
-    )
-  }
-}
-
 const active = async (req, res, next) => {
   const correctCondition = Joi.object({
     listId: Joi.array()
-      .items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE))
+      .items(
+        Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
+      )
       .default([])
   })
 
@@ -75,7 +54,9 @@ const active = async (req, res, next) => {
     await correctCondition.validateAsync(req.params)
     next()
   } catch (error) {
-    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error).message))
+    next(
+      new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error).message)
+    )
   }
 }
 
@@ -96,7 +77,6 @@ const deleteItem = async (req, res, next) => {
     )
   }
 }
-
 
 export const postValidation = {
   createNew,
