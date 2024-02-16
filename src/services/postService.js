@@ -39,9 +39,8 @@ const createNew = async (data) => {
 const getDetails = async (data) => {
   try {
     const post = await postModel.getDetails(data)
-    if (!post) {
-      throw new ApiError(StatusCodes.NOT_FOUND, 'post not found!')
-    }
+
+    if (!post) throw new ApiError(StatusCodes.NOT_FOUND, 'post not found!')
 
     return post
   } catch (error) {
@@ -59,11 +58,23 @@ const update = async (id, body) => {
   } catch (error) { return error }
 }
 
+const active = async (id, data) => {
+  try {
+    const updateDate = {
+      active: data.active,
+      updatedAt: Date.now()
+    }
+    await postModel.active(id, updateDate)
+    return { message: 'Active posts successfully!' }
+  } catch (error) { return error }
+}
+
+
 const deleteItem = async (id) => {
   try {
     // xóa item
     await postModel.deleteOneById(id)
-    return { deleteMessage: 'Delete posts successfully!' }
+    return { message: 'Delete posts successfully!' }
   } catch (error) { return error }
 }
 
@@ -73,5 +84,6 @@ export const postService = {
   createNew,
   getDetails,
   update,
+  active,
   deleteItem
 }

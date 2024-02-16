@@ -5,11 +5,12 @@ import { getDB } from '~/config/mongodb'
 
 const POST_COLLECTION_NAME = 'posts'
 const POST_COLLECTION_SCHEMA = Joi.object({
+  active: Joi.boolean().default(true),
   title: Joi.string().required().min(3).max(50).trim().strict(),
   slug: Joi.string().required().min(3).trim().strict(),
-  description: Joi.string().required().min(3).max(256).trim().strict(),
+  description: Joi.string().min(0).max(256).trim().strict(),
   image: Joi.string().uri().trim().strict().allow(null),
-
+  content: Joi.string(),
   columnOrderIds: Joi.array()
     .items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE))
     .default([]),
@@ -100,6 +101,28 @@ const update = async (id, data) => {
   }
 }
 
+const active = async (ids, data) => {
+  try {
+    Object.keys(data).forEach(item => {
+      if (INVALID_UPDATE_FIELDS.includes(item)) {
+        delete data[item]
+      }
+    })
+
+    const newIds = ids.map(id => new ObjectId(id))
+
+    const result = await getDB().collection(POST_COLLECTION_NAME).updateMany(
+      { _id: { $in: newIds } },
+      { $set: data },
+      { returnDocument: 'after' }
+    )
+
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 const deleteOneById = async (id) => {
   try {
     return await getDB()
@@ -121,5 +144,6 @@ export const postModel = {
   findOneById,
   getDetails,
   update,
+  active,
   deleteOneById
 }

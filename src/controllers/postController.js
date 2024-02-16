@@ -14,11 +14,9 @@ const getAllPosts = async (req, res, next) => {
 const createNew = async (req, res, next) => {
   try {
     const { slug } = req.body
-    // Kiểm tra xem slug đã tồn tại hay không
     const existingSlug = await postService.getBySlug(slug)
 
     if (existingSlug) {
-      // Nếu slug đã tồn tại, trả về lỗi cho client
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ message: 'Slug đã tồn tại' })
@@ -51,10 +49,19 @@ const update = async (req, res, next) => {
   } catch (error) { next(error) }
 }
 
+const active = async (req, res, next) => {
+  try {
+    const postIds = req.body.ids
+    const activePost = await postService.active(postIds, req.body)
+
+    res.status(StatusCodes.OK).json(activePost)
+  } catch (error) { next(error) }
+}
+
 
 const deleteItem = async (req, res, next) => {
   try {
-    const postId = req.params.id
+    const postId = req.params._id
     const result = await postService.deleteItem(postId)
 
     res.status(StatusCodes.OK).json(result)
@@ -67,5 +74,6 @@ export const postController = {
   createNew,
   getDetails,
   update,
+  active,
   deleteItem
 }
