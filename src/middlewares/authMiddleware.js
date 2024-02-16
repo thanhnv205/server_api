@@ -1,23 +1,24 @@
 import jwt from 'jsonwebtoken'
+import { env } from '~/config/environment'
+import { StatusCodes } from 'http-status-codes'
 
-const authUser = (req, res, next) => {
-  const token = req.header('x-auth-token')
+export const authMiddleware = (req, res, next) => {
+  const token = req.header('token')
 
   if (!token) {
     return res
-      .status(401)
+      .status(StatusCodes.UNAUTHORIZED)
       .json({ message: 'Token không hợp lệ, đăng nhập để tiếp tục' })
   }
 
   try {
-    const decoded = jwt.verify(token, 'your_secret_key') // Thay 'your_secret_key' bằng một secret key thực tế
+    // lấy token sau Bearer
+    const splitToken = token.split(' ')[1]
+    const decoded = jwt.verify(splitToken, env.JWT_SECRET_KEY)
 
-    console.log('decoded', decoded)
     req.user = decoded.user
     next()
   } catch (error) {
-    res.status(401).json({ message: 'Token không hợp lệ' })
+    res.status(StatusCodes.FORBIDDEN).json({ message: 'Token đã hết hạn' })
   }
 }
-
-export default authUser

@@ -3,11 +3,14 @@ import { ObjectId } from 'mongodb'
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/validators'
 import { getDB } from '~/config/mongodb'
 
-const USER_COLLECTION_NAME = 'users'
-const USER_COLLECTION_SCHEMA = Joi.object({
-  username: Joi.string().required().min(3).max(50).trim().strict(),
-  email: Joi.string().required().email().trim().strict(),
-  password: Joi.string().required().min(6).trim().strict(),
+const PERMISSIONS_COLLECTION_NAME = 'permissions'
+const PERMISSIONS_COLLECTION_SCHEMA = Joi.object({
+  active: Joi.boolean().default(true),
+  permission_name: Joi.string().required().min(3).max(50).trim().strict(),
+  permission_key: Joi.string().required().trim().strict(),
+  permission_code: Joi.string().required().min(3).max(50).trim().strict(),
+  description: Joi.string().trim().strict().allow(''),
+  icon: Joi.string().trim().strict().allow(''),
 
   createdAt: Joi.date().timestamp('javascript').default(Date.now),
   updatedAt: Joi.date().timestamp('javascript').default(null),
@@ -17,24 +20,14 @@ const USER_COLLECTION_SCHEMA = Joi.object({
 const INVALID_UPDATE_FIELDS = ['_id', 'createdAt']
 
 const validateBeforeCreate = async (data) => {
-  return await USER_COLLECTION_SCHEMA.validateAsync(data, {
+  return await PERMISSIONS_COLLECTION_SCHEMA.validateAsync(data, {
     abortEarly: false
   })
 }
 
-const getAllUsers = async () => {
+const getAllItems = async () => {
   try {
-    return await getDB().collection(USER_COLLECTION_NAME).find().toArray()
-  } catch (error) {
-    throw new Error(error)
-  }
-}
-
-const getBySlug = async (slug) => {
-  try {
-    return await getDB().collection(USER_COLLECTION_NAME).findOne({
-      slug: slug
-    })
+    return await getDB().collection(PERMISSIONS_COLLECTION_NAME).find()
   } catch (error) {
     throw new Error(error)
   }
@@ -43,7 +36,16 @@ const getBySlug = async (slug) => {
 const createNew = async (data) => {
   try {
     const valiData = await validateBeforeCreate(data)
-    return await getDB().collection(USER_COLLECTION_NAME).insertOne(valiData)
+
+    return await getDB().collection(PERMISSIONS_COLLECTION_NAME).insertOne(valiData)
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const getByName = async (permission_name) => {
+  try {
+    return await getDB().collection(PERMISSIONS_COLLECTION_NAME).findOne({ permission_name })
   } catch (error) {
     throw new Error(error)
   }
@@ -52,7 +54,7 @@ const createNew = async (data) => {
 const findOneById = async (id) => {
   try {
     return await getDB()
-      .collection(USER_COLLECTION_NAME)
+      .collection(PERMISSIONS_COLLECTION_NAME)
       .findOne({
         _id: new ObjectId(id)
       })
@@ -65,7 +67,7 @@ const findOneById = async (id) => {
 const getDetails = async (id) => {
   try {
     return await getDB()
-      .collection(USER_COLLECTION_NAME)
+      .collection(PERMISSIONS_COLLECTION_NAME)
       .findOne({
         _id: new ObjectId(id)
       })
@@ -83,7 +85,7 @@ const update = async (id, data) => {
       }
     })
 
-    const result = await getDB().collection(USER_COLLECTION_NAME).findOneAndUpdate(
+    const result = await getDB().collection(PERMISSIONS_COLLECTION_NAME).findOneAndUpdate(
       { _id: new ObjectId(id) },
       { $set: data },
       { returnDocument: 'after' }
@@ -105,7 +107,7 @@ const active = async (listId, data) => {
 
     const newIds = listId.map(id => new ObjectId(id))
 
-    const result = await getDB().collection(USER_COLLECTION_NAME).updateMany(
+    const result = await getDB().collection(PERMISSIONS_COLLECTION_NAME).updateMany(
       { _id: { $in: newIds } },
       { $set: data },
       { returnDocument: 'after' }
@@ -120,7 +122,7 @@ const active = async (listId, data) => {
 const deleteOneById = async (id) => {
   try {
     return await getDB()
-      .collection(USER_COLLECTION_NAME)
+      .collection(PERMISSIONS_COLLECTION_NAME)
       .deleteOne({
         _id: new ObjectId(id)
       })
@@ -129,12 +131,12 @@ const deleteOneById = async (id) => {
   }
 }
 
-export const userModel = {
-  USER_COLLECTION_NAME,
-  USER_COLLECTION_SCHEMA,
-  getAllUsers,
-  getBySlug,
+export const permissionsModel = {
+  PERMISSIONS_COLLECTION_NAME,
+  PERMISSIONS_COLLECTION_SCHEMA,
+  getAllItems,
   createNew,
+  getByName,
   findOneById,
   getDetails,
   update,

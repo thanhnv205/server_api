@@ -2,14 +2,15 @@ import { StatusCodes } from 'http-status-codes'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 
-import { userModel } from '../models/userModel'
+import { authModel } from '../models/authModel'
+import { env } from '~/config/environment'
 
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body
 
     // Kiểm tra xem người dùng có tồn tại không
-    const user = await userModel.findByEmail(email)
+    const user = await authModel.findByEmail(email)
     if (!user) {
       return res
         .status(StatusCodes.UNAUTHORIZED)
@@ -25,7 +26,7 @@ const loginUser = async (req, res) => {
     }
 
     // Tạo JWT token
-    const token = jwt.sign({ user: { id: user._id } }, 'your_secret_key', {
+    const token = jwt.sign({ user: { id: user._id } }, env.JWT_SECRET_KEY, {
       expiresIn: '1h'
     })
 
@@ -42,7 +43,7 @@ const createUser = async (req, res) => {
     const { email, password, username } = req.body
 
     // Kiểm tra user có tồn tại chưa
-    const existingUser = await userModel.findByEmail(email)
+    const existingUser = await authModel.findByEmail(email)
 
     if (existingUser) {
       return res
@@ -51,7 +52,7 @@ const createUser = async (req, res) => {
     }
 
     // Tạo mới user
-    const newUser = await userModel.createUser({ username, email, password })
+    const newUser = await authModel.createUser({ username, email, password })
     res.status(StatusCodes.CREATED).json(newUser)
   } catch (error) {
     res
@@ -60,4 +61,7 @@ const createUser = async (req, res) => {
   }
 }
 
-export { loginUser, createUser }
+export const authController = {
+  loginUser,
+  createUser
+}
