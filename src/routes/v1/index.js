@@ -11,7 +11,6 @@ Router.get('/status', (req, res) => {
 })
 
 // apis post
-
 Router.use('/posts', postRoute)
 Router.use('/category-posts', categoryPostRoute)
 

@@ -1,27 +1,34 @@
 /* eslint-disable no-console */
 import express from 'express'
+import path from 'path'
 import cors from 'cors'
 import { corsOptions } from '~/config/cross'
 
 import exitHook from 'async-exit-hook'
 import { connectDB, closeDB } from '~/config/mongodb'
+
 import { env } from '~/config/environment'
+import { errorHandlingMiddleware } from '~/middlewares/errorHandlingMiddleware'
 
 import { APIs_auth } from './routes/auth'
+import { APIs_system } from './routes/system'
 import { APIs_V1 } from '~/routes/v1'
 
-import { errorHandlingMiddleware } from '~/middlewares/errorHandlingMiddleware'
-import { APIs_system } from './routes/system'
 
 const startServer = () => {
   const app = express()
   app.use(cors(corsOptions))
-
   app.use(express.json())
 
   app.use('/auth', APIs_auth)
   app.use('/system', APIs_system)
   app.use('/v1', APIs_V1)
+
+  app.use('/images/:type', (req, res, next) => {
+    const { type } = req.params
+    const imagePath = path.resolve(__dirname, `../uploads/images/${type}`)
+    express.static(imagePath)(req, res, next)
+  })
 
   // middleware handler erorr
   app.use(errorHandlingMiddleware)

@@ -1,5 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
 import { postService } from '~/services/postService'
+import { generateFileName } from '~/utils/helper'
 
 const getAllPosts = async (req, res, next) => {
   try {
@@ -73,11 +74,33 @@ const deleteItem = async (req, res, next) => {
   }
 }
 
+const uploadImage = async (req, res, next) => {
+  try {
+    const { filename, size } = req.file
+    const { file_name, extname } = generateFileName(filename)
+
+    const dataImage = {
+      name: filename,
+      file_name,
+      extname,
+      size,
+      status: 'done',
+      url: `http://localhost:4017/images/posts/${filename}`
+    }
+
+    res.status(StatusCodes.OK).json({ dataImage })
+  } catch (error) {
+    next(error)
+  }
+}
+
+
 export const postController = {
   getAllPosts,
   createNew,
   getDetails,
   update,
   active,
-  deleteItem
+  deleteItem,
+  uploadImage
 }
