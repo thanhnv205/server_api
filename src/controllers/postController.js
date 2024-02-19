@@ -76,19 +76,19 @@ const deleteItem = async (req, res, next) => {
 
 const uploadImage = async (req, res, next) => {
   try {
-    const { filename, size } = req.file
-    const { file_name, extname } = generateFileName(filename)
+    const { filename, size, originalname } = req.file
+    const { extname } = generateFileName(filename)
 
     const dataImage = {
-      name: filename,
-      file_name,
+      name: originalname,
+      filename,
       extname,
       size,
       status: 'done',
       url: `http://localhost:4017/images/posts/${filename}`
     }
 
-    res.status(StatusCodes.OK).json({ dataImage })
+    res.status(StatusCodes.OK).json(dataImage)
   } catch (error) {
     next(error)
   }

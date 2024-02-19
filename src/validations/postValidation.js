@@ -78,9 +78,25 @@ const deleteItem = async (req, res, next) => {
   }
 }
 
+const deleteImage = async (req, res, next) => {
+  const correctCondition = Joi.object({
+    file: Joi.string().required().trim().strict()
+  })
+
+  try {
+    await correctCondition.validateAsync(req.body)
+    next()
+  } catch (error) {
+    next(
+      new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error).message)
+    )
+  }
+}
+
 export const postValidation = {
   createNew,
   update,
   active,
-  deleteItem
+  deleteItem,
+  deleteImage
 }

@@ -2,7 +2,7 @@ import express from 'express'
 
 import { postValidation } from '~/validations/postValidation'
 import { postController } from '~/controllers/postController'
-import { uploadImageMiddleware } from '~/middlewares/uploadImageMiddleware'
+import { deleteImage, uploadImageMiddleware } from '~/middlewares/uploadImageMiddleware'
 
 const Router = express.Router()
 
@@ -20,5 +20,8 @@ Router.route('/active')
 
 Router.route('/upload-image')
   .post(uploadImageMiddleware.single('image'), postController.uploadImage)
+
+Router.route('/delete-image')
+  .post(postValidation.deleteImage, deleteImage)
 
 export const postRoute = Router

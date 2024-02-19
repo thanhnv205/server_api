@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 import express from 'express'
-import path from 'path'
 import cors from 'cors'
 import { corsOptions } from '~/config/cross'
 
@@ -9,6 +8,7 @@ import { connectDB, closeDB } from '~/config/mongodb'
 
 import { env } from '~/config/environment'
 import { errorHandlingMiddleware } from '~/middlewares/errorHandlingMiddleware'
+import { serveImages } from './middlewares/uploadImageMiddleware'
 
 import { APIs_auth } from './routes/auth'
 import { APIs_system } from './routes/system'
@@ -23,12 +23,7 @@ const startServer = () => {
   app.use('/auth', APIs_auth)
   app.use('/system', APIs_system)
   app.use('/v1', APIs_V1)
-
-  app.use('/images/:type', (req, res, next) => {
-    const { type } = req.params
-    const imagePath = path.resolve(__dirname, `../uploads/images/${type}`)
-    express.static(imagePath)(req, res, next)
-  })
+  app.use('/images/:type', serveImages)
 
   // middleware handler erorr
   app.use(errorHandlingMiddleware)
