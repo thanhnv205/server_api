@@ -23,7 +23,6 @@ const createNew = async (req, res, next) => {
         .json({ message: 'Slug đã tồn tại' })
     }
 
-    // Nếu slug không tồn tại, tiếp tục tạo mới post
     const createdPost = await postService.createNew(req.body)
 
     res.status(StatusCodes.CREATED).json(createdPost)

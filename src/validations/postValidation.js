@@ -5,9 +5,13 @@ import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/validators'
 
 const createNew = async (req, res, next) => {
   const correctCondition = Joi.object({
-    title: Joi.string().required().min(3).max(50).trim().strict(),
+    active: Joi.boolean().default(true),
+    post_name: Joi.string().required().min(3).max(50).trim().strict(),
     slug: Joi.string().required().trim().strict(),
-    description: Joi.string().min(0).max(256).trim().strict()
+    description: Joi.string().min(0).max(256).trim().strict(),
+    public_date: Joi.string().required().trim().strict(),
+    image_name: Joi.string().trim().strict().allow(null),
+    content: Joi.string().allow(null)
   })
 
   try {

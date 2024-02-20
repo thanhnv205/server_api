@@ -21,13 +21,13 @@ const getBySlug = async (slug) => {
 
 const createNew = async (data) => {
   try {
-    const newpost = {
+    const newPosts = {
       ...data,
-      slug: slugify(data.title)
+      slug: slugify(data.post_name)
     }
 
     // gọi tới tầng model => lưu newpost vào Database
-    const createdpost = await postModel.createNew(newpost)
+    const createdpost = await postModel.createNew(newPosts)
 
     // lấy bản ghi post khi được tạo
     return await postModel.findOneById(createdpost.insertedId)
