@@ -11,7 +11,7 @@ const createNew = async (req, res, next) => {
     description: Joi.string().min(0).max(256).trim().strict(),
     public_date: Joi.string().required().trim().strict(),
     image_name: Joi.string().trim().strict().allow(null),
-    content: Joi.string().allow(null)
+    content: Joi.string().allow('', null)
   })
 
   try {
@@ -82,25 +82,10 @@ const deleteItem = async (req, res, next) => {
   }
 }
 
-const deleteImage = async (req, res, next) => {
-  const correctCondition = Joi.object({
-    file: Joi.string().required().trim().strict()
-  })
-
-  try {
-    await correctCondition.validateAsync(req.body)
-    next()
-  } catch (error) {
-    next(
-      new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error).message)
-    )
-  }
-}
 
 export const postValidation = {
   createNew,
   update,
   active,
-  deleteItem,
-  deleteImage
+  deleteItem
 }

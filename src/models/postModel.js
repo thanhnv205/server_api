@@ -9,7 +9,7 @@ const POST_COLLECTION_SCHEMA = Joi.object({
   slug: Joi.string().required().min(3).trim().strict(),
   description: Joi.string().required().min(0).max(256).trim().strict(),
   image_name: Joi.string().trim().strict().allow(null),
-  content: Joi.string().allow(null),
+  content: Joi.string().allow('', null),
   public_date: Joi.string().required().trim().strict(),
 
   createdAt: Joi.date().timestamp('javascript').default(Date.now),

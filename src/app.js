@@ -23,7 +23,7 @@ const startServer = () => {
   app.use('/auth', APIs_auth)
   app.use('/system', APIs_system)
   app.use('/v1', APIs_V1)
-  app.use('/images/:type', serveImages)
+  app.use('/images/:type/:file', serveImages)
 
   // middleware handler erorr
   app.use(errorHandlingMiddleware)

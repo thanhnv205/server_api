@@ -26,3 +26,20 @@ export const deleteAllFileTempFolder = () => {
     }
   })
 }
+
+export const moveFileToUploads = (dir, dirTmp, targetFileName) => {
+  const dirUploads = path.join(__dirname, `../../uploads${dir}`)
+
+  const parts = dirUploads.split(path.sep)
+  for (let i = 1; i <= parts.length; i++) {
+    const partialPath = path.join(...parts.slice(0, i))
+    if (!fs.existsSync(partialPath)) {
+      fs.mkdirSync(partialPath)
+    }
+  }
+
+  const targetFilePath = path.join(dirUploads, targetFileName)
+
+  fs.renameSync(dirTmp, targetFilePath)
+  return targetFilePath
+}

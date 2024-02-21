@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
+import { saveImages } from '~/middlewares/uploadImageMiddleware'
 import { postService } from '~/services/postService'
-import { generateFileName } from '~/utils/helper'
 
 const getAllPosts = async (req, res, next) => {
   try {
@@ -23,8 +23,8 @@ const createNew = async (req, res, next) => {
         .json({ message: 'Slug đã tồn tại' })
     }
 
+    saveImages(req, res, next)
     const createdPost = await postService.createNew(req.body)
-
     res.status(StatusCodes.CREATED).json(createdPost)
   } catch (error) {
     next(error)
@@ -73,33 +73,11 @@ const deleteItem = async (req, res, next) => {
   }
 }
 
-const uploadImage = async (req, res, next) => {
-  try {
-    const { filename, size, originalname } = req.file
-    const { extname } = generateFileName(filename)
-
-    const dataImage = {
-      name: originalname,
-      filename,
-      extname,
-      size,
-      status: 'done',
-      url: `http://localhost:4017/images/posts/${filename}`
-    }
-
-    res.status(StatusCodes.OK).json(dataImage)
-  } catch (error) {
-    next(error)
-  }
-}
-
-
 export const postController = {
   getAllPosts,
   createNew,
   getDetails,
   update,
   active,
-  deleteItem,
-  uploadImage
+  deleteItem
 }
