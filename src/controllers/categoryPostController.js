@@ -14,17 +14,14 @@ const getAllItem = async (req, res, next) => {
 const createNew = async (req, res, next) => {
   try {
     const { slug } = req.body
-    // Kiểm tra xem slug có tồn tại hay không
     const existingSlug = await categoryPostService.getBySlug(slug)
 
     if (existingSlug) {
-      // Nếu slug đã tồn tại, trả về lỗi cho client
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ message: 'Slug đã tồn tại' })
     }
 
-    // Nếu slug không tồn tại, tiếp tục tạo mới post
     const createdPost = await categoryPostService.createNew(req.body)
 
     res.status(StatusCodes.CREATED).json(createdPost)

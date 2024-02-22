@@ -33,7 +33,7 @@ const createNew = async (req, res, next) => {
 
 const getDetails = async (req, res, next) => {
   try {
-    const post = await postService.getDetails(req.params.id)
+    const post = await postService.getDetails(req.params._id)
     res.status(StatusCodes.OK).json(post)
   } catch (error) {
     next(error)

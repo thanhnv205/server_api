@@ -19,16 +19,16 @@ const getByEmail = async (email) => {
 }
 
 
-const codeIdGenerator = new CodeIdGenerator('ID')
 const createInfo = async (data) => {
   try {
     const newInfo = {
       ...data,
-      code_id: codeIdGenerator.generateCodeId()
+      code_id: CodeIdGenerator.generateCodeId('ID')
     }
-
-    const createdUser = await infoModel.createInfo(newInfo)
-    return await infoModel.findOneById(createdUser.insertedId)
+    console.log(newInfo)
+    return newInfo
+    // const createdUser = await infoModel.createInfo(newInfo)
+    // return await infoModel.findOneById(createdUser.insertedId)
   } catch (error) {
     return error
   }

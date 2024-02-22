@@ -29,7 +29,6 @@ const createNew = async (data) => {
     // gọi tới tầng model => lưu newpost vào Database
     const createdpost = await postModel.createNew(newPosts)
 
-    // lấy bản ghi post khi được tạo
     return await postModel.findOneById(createdpost.insertedId)
   } catch (error) {
     return error

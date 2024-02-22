@@ -25,7 +25,6 @@ const startServer = () => {
   app.use('/v1', APIs_V1)
   app.use('/images/:type/:file', serveImages)
 
-  // middleware handler erorr
   app.use(errorHandlingMiddleware)
 
   app.listen(env.PORT, env.APP_HOST, () => {
