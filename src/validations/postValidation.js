@@ -27,8 +27,12 @@ const createNew = async (req, res, next) => {
 
 const update = async (req, res, next) => {
   const correctCondition = Joi.object({
-    title: Joi.string().min(3).max(50).trim().strict(),
-    slug: Joi.string().trim().strict()
+    post_name: Joi.string().required().min(3).max(50).trim().strict(),
+    slug: Joi.string().required().trim().strict(),
+    description: Joi.string().min(0).max(256).trim().strict(),
+    public_date: Joi.string().required().trim().strict(),
+    image_name: Joi.string().trim().strict().allow(null),
+    content: Joi.string().allow('', null)
   })
 
   try {
@@ -36,7 +40,6 @@ const update = async (req, res, next) => {
       abortEarly: false,
       allowUnknown: true
     })
-    // validate hợp lệ => qua tầng contrller
     next()
   } catch (error) {
     next(

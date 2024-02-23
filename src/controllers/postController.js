@@ -42,7 +42,7 @@ const getDetails = async (req, res, next) => {
 
 const update = async (req, res, next) => {
   try {
-    const postId = req.params.id
+    const postId = req.params._id
     const updatedPost = await postService.update(postId, req.body)
 
     res.status(StatusCodes.OK).json(updatedPost)
