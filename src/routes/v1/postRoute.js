@@ -10,15 +10,17 @@ const Router = express.Router()
 
 Router.route('/')
   .get(postController.getAllPosts)
-  .post( postValidation.createNew, postController.createNew)
+  .post(postValidation.createNew, postController.createNew)
 
 Router.route('/:_id')
   .get(postController.getDetails)
   .put(postValidation.update, postController.update)
-  .delete(postValidation.deleteItem, postController.deleteItem)
 
 Router.route('/active')
   .post(postValidation.active, postController.active)
+
+Router.route('/destroy')
+  .post(postValidation.deleteItem, postController.deleteItem)
 
 Router.route('/upload-image')
   .post(uploadImageMiddleware.single('image'), uploadImageController.uploadImage)

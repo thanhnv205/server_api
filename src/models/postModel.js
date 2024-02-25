@@ -1,6 +1,7 @@
 import Joi from 'joi'
 import { ObjectId } from 'mongodb'
 import { getDB } from '~/config/mongodb'
+import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/validators'
 
 const POST_COLLECTION_NAME = 'posts'
 const POST_COLLECTION_SCHEMA = Joi.object({
@@ -11,6 +12,9 @@ const POST_COLLECTION_SCHEMA = Joi.object({
   image_name: Joi.string().trim().strict().allow(null),
   content: Joi.string().allow('', null),
   public_date: Joi.string().required().trim().strict(),
+  id_post_category: Joi.array().required().items(
+    Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
+  ).default([]),
 
   createdAt: Joi.date().timestamp('javascript').default(Date.now),
   updatedAt: Joi.date().timestamp('javascript').default(null),
@@ -123,12 +127,13 @@ const active = async (ids, data) => {
   }
 }
 
-const deleteOneById = async (id) => {
+const deleteManyById = async (ids) => {
   try {
+    const newIds = ids.map((id) => new ObjectId(id))
     return await getDB()
       .collection(POST_COLLECTION_NAME)
-      .deleteOne({
-        _id: new ObjectId(id)
+      .deleteMany({
+        _id: { $in: newIds }
       })
   } catch (error) {
     throw new Error(error)
@@ -145,5 +150,5 @@ export const postModel = {
   getDetails,
   update,
   active,
-  deleteOneById
+  deleteManyById
 }

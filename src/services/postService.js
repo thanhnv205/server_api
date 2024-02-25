@@ -72,10 +72,9 @@ const active = async (id, data) => {
   }
 }
 
-const deleteItem = async (id) => {
+const deleteItem = async (ids) => {
   try {
-    // xóa item
-    await postModel.deleteOneById(id)
+    await postModel.deleteManyById(ids)
     return { message: 'Delete posts successfully!' }
   } catch (error) {
     return error

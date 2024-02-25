@@ -10,6 +10,9 @@ Router.route('/')
   .get(categoryPostController.getAllItem)
   .post(categoryPostValidation.createNew, categoryPostController.createNew)
 
+// Router.route('/active')
+//   .post(categoryPostValidation.active, categoryPostController.active)
+
 Router.route('/:id').get(categoryPostController.getDetails).put()
 
 export const categoryPostRoute = Router

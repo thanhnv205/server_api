@@ -53,8 +53,8 @@ const update = async (req, res, next) => {
 
 const active = async (req, res, next) => {
   try {
-    const postIds = req.body.ids
-    const activePost = await postService.active(postIds, req.body)
+    const { listId } = req.body
+    const activePost = await postService.active(listId, req.body)
 
     res.status(StatusCodes.OK).json(activePost)
   } catch (error) {
@@ -64,8 +64,8 @@ const active = async (req, res, next) => {
 
 const deleteItem = async (req, res, next) => {
   try {
-    const postId = req.params._id
-    const result = await postService.deleteItem(postId)
+    const { listId } = req.body
+    const result = await postService.deleteItem(listId)
 
     res.status(StatusCodes.OK).json(result)
   } catch (error) {

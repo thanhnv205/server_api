@@ -8,6 +8,9 @@ const createNew = async (req, res, next) => {
     active: Joi.boolean().default(true),
     post_name: Joi.string().required().min(3).max(50).trim().strict(),
     slug: Joi.string().required().trim().strict(),
+    id_post_category: Joi.array().required().items(
+      Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
+    ).default([]),
     description: Joi.string().min(0).max(256).trim().strict(),
     public_date: Joi.string().required().trim().strict(),
     image_name: Joi.string().trim().strict().allow(null),
@@ -54,11 +57,12 @@ const active = async (req, res, next) => {
       .items(
         Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
       )
-      .default([])
+      .default([]),
+    active: Joi.boolean()
   })
 
   try {
-    await correctCondition.validateAsync(req.params)
+    await correctCondition.validateAsync(req.body)
     next()
   } catch (error) {
     next(
@@ -69,14 +73,15 @@ const active = async (req, res, next) => {
 
 const deleteItem = async (req, res, next) => {
   const correctCondition = Joi.object({
-    _id: Joi.string()
-      .required()
-      .pattern(OBJECT_ID_RULE)
-      .message(OBJECT_ID_RULE_MESSAGE)
+    listId: Joi.array()
+      .items(
+        Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
+      )
+      .default([])
   })
 
   try {
-    await correctCondition.validateAsync(req.params)
+    await correctCondition.validateAsync(req.body)
     next()
   } catch (error) {
     next(
