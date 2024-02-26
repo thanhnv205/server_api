@@ -19,7 +19,6 @@ const createNew = async (req, res, next) => {
 
   try {
     await correctCondition.validateAsync(req.body, { abortEarly: false })
-    // validate hợp lệ => qua tầng controller
     next()
   } catch (error) {
     next(

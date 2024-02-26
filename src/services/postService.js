@@ -26,9 +26,7 @@ const createNew = async (data) => {
       slug: slugify(data.post_name)
     }
 
-    // gọi tới tầng model => lưu newpost vào Database
     const createdpost = await postModel.createNew(newPosts)
-
     return await postModel.findOneById(createdpost.insertedId)
   } catch (error) {
     return error

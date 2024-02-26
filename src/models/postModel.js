@@ -2,12 +2,12 @@ import Joi from 'joi'
 import { ObjectId } from 'mongodb'
 import { getDB } from '~/config/mongodb'
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/validators'
+import { categoryPostModal } from './categoryPostModal'
 
 const POST_COLLECTION_NAME = 'posts'
 const POST_COLLECTION_SCHEMA = Joi.object({
   active: Joi.boolean().required().default(true),
   post_name: Joi.string().required().min(3).max(50).trim().strict(),
-  category_name: Joi.string().trim().strict(),
   slug: Joi.string().required().min(3).trim().strict(),
   description: Joi.string().required().min(0).max(256).trim().strict(),
   image_name: Joi.string().trim().strict().allow(null),
@@ -32,7 +32,8 @@ const validateBeforeCreate = async (data) => {
 
 const getAllPosts = async () => {
   try {
-    return await getDB().collection(POST_COLLECTION_NAME).find().toArray()
+    const result = await getDB().collection(POST_COLLECTION_NAME).find().toArray()
+    return result
   } catch (error) {
     throw new Error(error)
   }
