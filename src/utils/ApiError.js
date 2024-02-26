@@ -1,5 +1,4 @@
 class ApiError extends Error {
-  // khởi tạo class
   constructor(statusCode, message) {
     super(message)
 

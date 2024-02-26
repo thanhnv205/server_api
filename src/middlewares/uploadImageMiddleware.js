@@ -63,3 +63,13 @@ export const saveImages = (req, res, next) => {
     next(error)
   }
 }
+
+
+export const destroyImages = (req, res, next) => {
+  try {
+    const { image_name } = req.body
+    console.log(image_name)
+  } catch (error) {
+    next(error)
+  }
+}

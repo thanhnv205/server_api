@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes'
-import { saveImages } from '~/middlewares/uploadImageMiddleware'
+import { destroyImages, saveImages } from '~/middlewares/uploadImageMiddleware'
 import { postService } from '~/services/postService'
 
 const getAllPosts = async (req, res, next) => {
@@ -66,7 +66,7 @@ const deleteItem = async (req, res, next) => {
   try {
     const { listId } = req.body
     const result = await postService.deleteItem(listId)
-
+    destroyImages(req, res, next)
     res.status(StatusCodes.OK).json(result)
   } catch (error) {
     next(error)

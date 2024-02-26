@@ -7,6 +7,7 @@ const POST_COLLECTION_NAME = 'posts'
 const POST_COLLECTION_SCHEMA = Joi.object({
   active: Joi.boolean().required().default(true),
   post_name: Joi.string().required().min(3).max(50).trim().strict(),
+  category_name: Joi.string().trim().strict(),
   slug: Joi.string().required().min(3).trim().strict(),
   description: Joi.string().required().min(0).max(256).trim().strict(),
   image_name: Joi.string().trim().strict().allow(null),
