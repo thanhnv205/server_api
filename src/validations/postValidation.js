@@ -8,7 +8,7 @@ const createNew = async (req, res, next) => {
     active: Joi.boolean().default(true),
     post_name: Joi.string().required().min(3).max(50).trim().strict(),
     slug: Joi.string().required().trim().strict(),
-    id_post_category: Joi.array().required().items(
+    category_post_id: Joi.array().required().items(
       Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
     ).default([]),
     description: Joi.string().min(0).max(256).trim().strict(),
@@ -30,6 +30,9 @@ const createNew = async (req, res, next) => {
 const update = async (req, res, next) => {
   const correctCondition = Joi.object({
     post_name: Joi.string().required().min(3).max(50).trim().strict(),
+    category_post_id: Joi.array().required().items(
+      Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
+    ).default([]),
     slug: Joi.string().required().trim().strict(),
     description: Joi.string().min(0).max(256).trim().strict(),
     public_date: Joi.string().required().trim().strict(),

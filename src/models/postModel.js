@@ -13,7 +13,7 @@ const POST_COLLECTION_SCHEMA = Joi.object({
   image_name: Joi.string().trim().strict().allow(null),
   content: Joi.string().allow('', null),
   public_date: Joi.string().required().trim().strict(),
-  id_post_category: Joi.array().required().items(
+  category_post_id: Joi.array().required().items(
     Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
   ).default([]),
 
@@ -32,8 +32,25 @@ const validateBeforeCreate = async (data) => {
 
 const getAllPosts = async () => {
   try {
-    const result = await getDB().collection(POST_COLLECTION_NAME).find().toArray()
-    return result
+    const posts = await getDB().collection(POST_COLLECTION_NAME).find().toArray()
+    const allCate = await getDB().collection(categoryPostModal.CATEGORY_POST_COLLECTION_NAME).find().toArray()
+
+    const cateId = allCate.map(({ _id }) => _id.toString())
+
+    const newData = posts.map(item => ({
+      ...item,
+      category_name: cateId.includes(item.category_post_id) ? 'abc' : 'xyz'
+    }))
+    console.log(newData)
+    // posts.forEach(item => {
+    //   console.log('cateId =>', cateId)
+    //   console.log('item.category_post_id =>', item.category_post_id)
+    //   const isIncluded = item.category_post_id.includes(cateId)
+    //   const newData = ca
+    //   console.log(cateId[item.category_post_id])
+
+    // })
+    return posts
   } catch (error) {
     throw new Error(error)
   }
