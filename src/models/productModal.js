@@ -1,9 +1,9 @@
-import Joi from "joi";
-import { ObjectId } from "mongodb";
-import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from "~/utils/validators";
-import { getDB } from "~/config/mongodb";
+import Joi from 'joi'
+import { ObjectId } from 'mongodb'
+import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/validators'
+import { getDB } from '~/config/mongodb'
 
-const PRODUCT_COLLECTION_NAME = "products";
+const PRODUCT_COLLECTION_NAME = 'products'
 
 const PRODUCT_COLLECTION_SCHEMA = Joi.object({
   product_code: Joi.string().required().min(3).max(50).trim().strict(),
@@ -18,61 +18,67 @@ const PRODUCT_COLLECTION_SCHEMA = Joi.object({
     .required()
     .pattern(OBJECT_ID_RULE)
     .message(OBJECT_ID_RULE_MESSAGE),
+  images: Joi.array()
+    .required()
+    .items(
+      Joi.object({
+        image_name: Joi.string().trim().strict().allow(null)
+      })
+    )
+    .default([]),
 
-  images: Joi.array().items(Joi.string().trim().strict()).default([]),
-
-  createdAt: Joi.date().timestamp("javascript").default(Date.now),
-  updatedAt: Joi.date().timestamp("javascript").default(null),
-  _destroy: Joi.boolean().default(false),
-});
+  createdAt: Joi.date().timestamp('javascript').default(Date.now),
+  updatedAt: Joi.date().timestamp('javascript').default(null),
+  _destroy: Joi.boolean().default(false)
+})
 
 const getAllItem = async () => {
   try {
-    return await getDB().collection(PRODUCT_COLLECTION_NAME).find().toArray();
+    return await getDB().collection(PRODUCT_COLLECTION_NAME).find().toArray()
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error)
   }
-};
+}
 
 const validateBeforeCreate = async (data) => {
   return await PRODUCT_COLLECTION_SCHEMA.validateAsync(data, {
-    abortEarly: false,
-  });
-};
+    abortEarly: false
+  })
+}
 
 const getBySlug = async (slug) => {
   try {
     return await getDB().collection(PRODUCT_COLLECTION_NAME).findOne({
-      slug: slug,
-    });
+      slug: slug
+    })
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error)
   }
-};
+}
 
 const createNew = async (data) => {
   try {
-    const valiData = await validateBeforeCreate(data);
+    const valiData = await validateBeforeCreate(data)
 
     return await getDB()
       .collection(PRODUCT_COLLECTION_NAME)
-      .insertOne(valiData);
+      .insertOne(valiData)
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error)
   }
-};
+}
 
 const findOneById = async (id) => {
   try {
     return await getDB()
       .collection(PRODUCT_COLLECTION_NAME)
       .findOne({
-        _id: new ObjectId(id),
-      });
+        _id: new ObjectId(id)
+      })
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error)
   }
-};
+}
 
 // query tổng hợp (aggregate)
 const getDetails = async (id) => {
@@ -80,25 +86,25 @@ const getDetails = async (id) => {
     return await getDB()
       .collection(PRODUCT_COLLECTION_NAME)
       .findOne({
-        _id: new ObjectId(id),
-      });
+        _id: new ObjectId(id)
+      })
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error)
   }
-};
+}
 
 const deleteById = async (ids) => {
   try {
-    const newIds = ids.map((id) => new ObjectId(id));
+    const newIds = ids.map((id) => new ObjectId(id))
     return await getDB()
       .collection(PRODUCT_COLLECTION_NAME)
       .deleteMany({
-        _id: { $in: newIds },
-      });
+        _id: { $in: newIds }
+      })
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error)
   }
-};
+}
 
 export const productModal = {
   PRODUCT_COLLECTION_NAME,
@@ -108,5 +114,5 @@ export const productModal = {
   createNew,
   findOneById,
   getDetails,
-  deleteById,
-};
+  deleteById
+}
